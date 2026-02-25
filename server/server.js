@@ -14,13 +14,27 @@ const app = express();
 
 // CORS Configuration for production
 const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'https://clienttracking.netlify.app',
-    'https://tracking-system-a7ib.onrender.com'
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://clienttracking.netlify.app',
+      'https://tracking-system-a7ib.onrender.com'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 // Middleware
@@ -48,9 +62,10 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Debug middleware to log requests
+// Debug middleware to log requests and CORS
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path} - Body:`, req.body);
+  console.log(`${req.method} ${req.path} - Origin: ${req.headers.origin}`);
+  console.log('Headers:', req.headers);
   next();
 });
 
