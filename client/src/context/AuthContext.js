@@ -11,7 +11,7 @@ export const useAuth = () => {
   return context;
 };
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://tracking-system-a7ib.onrender.com/api';
 
 // Set up axios defaults
 axios.defaults.baseURL = API_URL;

@@ -64,7 +64,7 @@ const ClientProgressViewer = () => {
       return imageUrl;
     }
     // Otherwise, prepend server URL
-    return `http://localhost:5000${imageUrl}`;
+    return `https://tracking-system-a7ib.onrender.com${imageUrl}`;
   };
 
   useEffect(() => {

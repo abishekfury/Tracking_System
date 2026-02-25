@@ -30,7 +30,7 @@ import { useAuth } from '../context/AuthContext';
 
 const DRAWER_WIDTH = 280;
 
-const Sidebar = ({ open, onClose }) => {
+const Sidebar = ({ open, onClose, variant = 'permanent', isMobile = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -144,15 +144,22 @@ const Sidebar = ({ open, onClose }) => {
 
   const handleNavigation = (path) => {
     navigate(path);
-    if (onClose) onClose();
+    // Close mobile drawer after navigation
+    if (isMobile && onClose) {
+      onClose();
+    }
   };
 
   const currentMenuItems = menuItems[user?.role] || [];
 
   return (
     <Drawer
-      variant="permanent"
-      open={open}
+      variant={variant}
+      open={variant === 'permanent' ? true : open}
+      onClose={onClose}
+      ModalProps={{
+        keepMounted: true, // Better open performance on mobile
+      }}
       sx={{
         width: DRAWER_WIDTH,
         flexShrink: 0,

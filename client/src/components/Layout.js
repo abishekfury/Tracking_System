@@ -25,11 +25,16 @@ const Layout = () => {
         component="nav"
         sx={{ 
           width: { lg: DRAWER_WIDTH }, 
-          flexShrink: { lg: 0 },
-          display: { xs: 'none', lg: 'block' }
+          flexShrink: { lg: 0 }
         }}
       >
-        <Sidebar open={!isMobile} onClose={handleDrawerToggle} />
+        {/* Mobile drawer */}
+        <Sidebar 
+          open={mobileOpen} 
+          onClose={handleDrawerToggle} 
+          variant={isMobile ? 'temporary' : 'permanent'}
+          isMobile={isMobile}
+        />
       </Box>
 
       {/* Main Content */}
