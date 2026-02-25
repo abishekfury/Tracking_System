@@ -12,12 +12,41 @@ connectDB();
 
 const app = express();
 
+// CORS Configuration for production
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'https://clienttracking.netlify.app',
+    'https://tracking-system-a7ib.onrender.com'
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Tracking System Server is running!', 
+    timestamp: new Date().toISOString(),
+    status: 'healthy'
+  });
+});
+
+// API health check
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'API is working!',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Debug middleware to log requests
 app.use((req, res, next) => {
