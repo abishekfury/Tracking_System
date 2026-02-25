@@ -33,7 +33,8 @@ router.post('/upload', auth, authorize('client'), upload.single('image'), async 
     }
 
     // Create progress image record
-    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    const serverUrl = process.env.SERVER_URL || 'https://tracking-system-a7ib.onrender.com';
+    const imageUrl = `${serverUrl}/uploads/${req.file.filename}`;
     console.log('Creating progress image with URL:', imageUrl);
     
     const progressImage = new ProgressImage({
