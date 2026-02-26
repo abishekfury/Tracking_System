@@ -4,50 +4,31 @@ const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
 
-// Load env variables FIRST
 dotenv.config();
 
 const app = express();
 
-/* =======================
-   CORS (ONLY ONE PLACE)
-======================= */
+/* CORS */
 app.use(
   cors({
     origin: 'https://clienttracking.netlify.app',
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
-/* =======================
-   BODY PARSER
-======================= */
 app.use(express.json());
-
-/* =======================
-   STATIC FILES
-======================= */
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-/* =======================
-   HEALTH CHECKS
-======================= */
+/* Health */
 app.get('/', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'Tracking System Server running',
-  });
+  res.json({ status: 'OK' });
 });
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'API healthy' });
 });
 
-/* =======================
-   ROUTES
-======================= */
+/* Routes */
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/clients', require('./routes/clients'));
@@ -57,21 +38,24 @@ app.use('/api/workouts', require('./routes/workouts'));
 app.use('/api/progress-images', require('./routes/progressImages'));
 app.use('/api/diet-plans', require('./routes/dietPlans'));
 
-/* =======================
-   ERROR HANDLER
-======================= */
+/* Error Handler */
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(err.status || 500).json({
-    message: err.message || 'Internal Server Error',
-  });
+  res.status(500).json({ message: err.message });
 });
 
-/* =======================
-   START SERVER AFTER DB
-======================= */
+/* 🚀 START SERVER ONLY AFTER DB */
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
+    );
+  } catch (err) {
+    process.exit(1);
+  }
+};
+
+startServer();
